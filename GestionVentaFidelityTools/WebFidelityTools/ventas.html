@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title>SoftEVenta</title>
+</head>
+
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03"
+            aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <a class="navbar-brand">Gestion de Ventas</a>
+
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+            <ul class="navbar-nav mt-2 mt-lg-0 ml-auto mr-3">
+                <li class="nav-item active mr-2">
+                    <a class="nav-link" href="index.html">Productos <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="ventas.html">Ventas</a>
+                </li>
+
+            </ul>
+
+        </div>
+    </nav>
+
+</header>
+
+<body>
+
+    <div class="row mt-5">
+        <div class="col-12 col-md-12 col-sm-12 text-center">
+            <h3 class="display-5">VENTAS</h3>
+            <h4 class="display-8">Seleccione sus Productos</h4>
+        </div>
+        <div class="container">
+            <div class="card mt-5">
+                <div class="card-body">
+                    <div>
+                        <table class="table">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col">Id</th>
+                                    <th scope="col">Nombre</th>
+                                    <th scope="col">Categoria</th>
+                                    <th scope="col">Stock</th>
+                                    <th scope="col">Precio</th>
+                                    <th scope="col">Estado</th>
+                                    <th scope="col">Cantidad</th>
+                                    <th scope="col">Accion</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla">
+
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-12 col-md-12 col-sm-12 text-center">
+            <h3 class="display-5">PRODUCTOS EN SU CARRITO</h3>
+        </div>
+        <div class="container">
+            <div class="card mt-5">
+                <div class="card-body">
+                    <div>
+                        <table class="table" name=tablaC>
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col">Id</th>
+                                    <th scope="col">Nombre</th>
+                                    <th scope="col">Precio</th>
+                                    <th scope="col">Cantidad</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaCarro">
+
+                            </tbody>
+                            <h5 class="display-7" id="lblImporte">TOTAL: $</h5>
+                        </table>
+                        <button onclick="registrarVenta()" class="btn btn-primary float-right" id="botonVenta">Registrar
+                            Venta</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+
+</html>
+
+
+
+
+
+
+<script>
+    var urlGet = "https://localhost:44312/api/productos";
+    var urlGetCategoria = "https://localhost:44312/api/tiposproductos/"
+    var urlGetProductoActivo = "https://localhost:44312/api/productos/activo";
+    var urlDisminuirStock = "https://localhost:44312/api/productos/disminuir/"
+    var urlGetProducto = "https://localhost:44312/api/productos/";
+    var contenido = document.querySelector('#tabla');
+    var contenidoCarro = document.querySelector('#tablaCarro');
+    var valorCategoria = '';
+
+    var productoObjeto;
+    getProductosActivos();
+
+    function getProductosActivos() {
+        fetch(urlGetProductoActivo).then(res => res.json()).then(datos => {
+            tabla(datos)
+        })
+    }
+
+    function tabla(datos) {
+        contenido.innerHTML = ''
+        for (let valor of datos) {
+
+            fetch(urlGetCategoria + valor.idTipoProducto).then(respuesta => respuesta.json()).then(datosCategoria => {
+                valorCategoria = datosCategoria[0].nombre;
+                contenido.innerHTML += `
+            <tr>
+                                    <th scope="row">${valor.id}</th>
+                                    <td>${valor.nombre}</td>
+                                    <td>${valorCategoria}</td>
+                                    <td>${valor.stock}</td>
+                                    <td>${valor.precio}</td>
+                                    <td>${valor.estado ? "Activo" : "Inactivo"}</td>
+                                    <td> <input type="text" class="form-control Cantidad" id="cantidadProducto" min="1" onkeypress="return soloNumeros(event)" onblur="limpia()" ></input></td>
+                                    <td><button class="btn btn-success botonAñadir" type="submit">Añadir</button>
+                                </tr>
+                                `
+
+
+            })
+
+        }
+    }
+
+    function tablaCarro(datos) {
+        contenidoCarro.innerHTML = ''
+        for (let valor of datos) {
+
+            contenidoCarro.innerHTML += `
+            <tr>
+                                    <th scope="row">${valor.id}</th>
+                                    <td>${valor.nombre}</td>
+                                    <td>${valor.precio}</td>
+                                    <td>${valor.cantidad}</td>
+      
+          
+                                </tr>
+                                `
+
+
+
+        }
+    }
+
+
+
+    //evento click para editar un producto
+    $("#tabla").on("click", ".botonAñadir", function () {
+        var id = $(this).parents().parents().children().first().text();
+
+        var fila = $(this).parents("tr");
+        var cantidad = fila.find("#cantidadProducto").val();
+        fetch(urlGetProducto + id).then(res => res.json()).then(datos => {
+
+            function Producto(id, nombre, stock, precio, cantidad) {
+                this.id = id;
+                this.nombre = nombre;
+                this.stock = stock;
+                this.precio = precio;
+                this.cantidad = cantidad;
+            }
+
+            nuevoProducto = new Producto(datos.id, datos.nombre, datos.stock, datos.precio, cantidad);
+            console.log(cantidad);
+            agregar();
+
+        });
+    });
+
+    var baseDatos = [];
+    function agregar() {
+        baseDatos.push(nuevoProducto)
+        tablaCarro(baseDatos);
+        calcularTotal(baseDatos);
+        console.log(baseDatos);
+    }
+
+    function calcularTotal(datos) {
+        var total = 0;
+        for (let valor of datos) {
+            cantidad = 0;
+            importe = 0;
+
+            cantidad = cantidad += valor.cantidad;
+            importe = valor.precio * cantidad;
+            total = total + importe;
+
+        }
+        console.log("importe " + total);
+        document.querySelector('#lblImporte').innerText = 'Total $ ' + new Intl.NumberFormat("de-DE").format(total);
+
+    }
+
+    function registrarVenta() {
+        console.log(baseDatos.length);
+        if (baseDatos != 0) {
+            for (let valor of baseDatos) {
+                fetch(urlDisminuirStock + valor.id + "/" + valor.cantidad).then(respuesta => respuesta.json);
+                baseDatos = [];
+                tablaCarro(baseDatos);
+                alert("Venta registrada con exito");
+                getProductosActivos();
+                document.querySelector('#lblImporte').innerText = 'Total $ ';
+            }
+        }
+        else
+            alert("Su carro de compra no contiene ningun producto");
+    }
+
+
+    function soloNumeros(e) {
+        key = e.keyCode || e.which;
+        tecla = String.fromCharCode(key).toLowerCase();
+        letras = "0123456789";
+        especiales = [];
+
+        tecla_especial = false
+        for (var i in especiales) {
+            if (key == especiales[i]) {
+                tecla_especial = true;
+                break;
+            }
+        }
+
+        if (letras.indexOf(tecla) == -1 && !tecla_especial)
+            return false;
+    }
+
+    function limpia() {
+        var val = document.getElementById("cantidadProducto").value;
+        var tam = val.length;
+        for (i = 0; i < tam; i++) {
+            if (!isNaN(val[i]))
+                document.getElementById("cantidadProducto").value = '';
+        }
+    }
+</script>

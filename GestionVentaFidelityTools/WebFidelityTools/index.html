@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title>SoftEVenta</title>
+</head>
+
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03"
+            aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <a class="navbar-brand">Gestion de Ventas</a>
+
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+            <ul class="navbar-nav mt-2 mt-lg-0 ml-auto mr-3">
+                <li class="nav-item active mr-2">
+                    <a class="nav-link" href="index.html">Productos <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="ventas.html">Ventas</a>
+                </li>
+
+            </ul>
+
+        </div>
+    </nav>
+
+</header>
+
+<body>
+    <div class="row mt-5" id="registro1">
+        <div class="col-12 col-md-12 col-sm-12 text-center">
+                <h3 class="display-5" id="registro">GESTION DE PRODUCTOS</h3>
+                <br>
+            <h3 class="display-5" id="registro">REGISTRAR</h3>
+        </div>
+        <div class="container">
+            <div class="card mt-5">
+                <form class="ml-2 mr-2" name="formulario" id="form">
+                    <div class="form-group mt-2">
+                        <label id="labelId" hidden="true"><b></b></label>
+                        <label for="exampleFormControlInput1"><b>Nombre</b></label>
+                        <input type="text" class="form-control" id="nombre">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleFormControlInput2"><b>Stock</b></label>
+                        <input type="number" class="form-control" id="stock" min="1" onkeypress="return soloNumeros(event)" onblur="limpia()">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleFormControlSelect1"><b>Categoria</b></label>
+                        <select class="form-control" id="categoria">
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleFormControlInput3"><b>Precio</b></label>
+                        <input type="text" class="form-control" id="precio" onkeypress="return filterFloat(event,this);">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleFormControlSelect2"><b>Estado</b></label>
+                        <select class="form-control" id="estado">
+                            <option>Activo</option>
+                            <option>Inactivo</option>
+                        </select>
+                    </div>
+
+            </div>
+
+            </form>
+            <button onclick="post()" class="btn btn-success mb-2 mt-2">Confirmar</button>
+            <button onclick="refrescarFormulario()"
+                class="btn btn-primary mb-2 mt-2 botonRestablecer">Restablecer</button>
+
+        </div>
+    </div>
+    </div>
+
+
+
+    <div class="row mt-5">
+        <div class="container text-center">
+            <h3 class="display-5">PRODUCTOS</h3>
+            <button onclick="getProductos()" class="btn btn-info float-right ml-3">Todos</button>
+            <button onclick="getProductosActivos()" class="btn btn-secondary float-right ">Activos</button>
+        </div>
+        <div class="container">
+            <div class="card mt-5">
+                <div class="card-body">
+                    <div>
+                        <table class="table">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col">Id</th>
+                                    <th scope="col">Nombre</th>
+                                    <th scope="col">Categoria</th>
+                                    <th scope="col">Stock</th>
+                                    <th scope="col">Precio</th>
+                                    <th scope="col">Estado</th>
+                                    <th scope="col">Accion</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla">
+
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+</body>
+
+</html>
+
+<script>
+    var url = "https://localhost:44312/api/productos";
+    var urlGetProducto = "https://localhost:44312/api/productos/";
+    var urlGetProductoActivo = "https://localhost:44312/api/productos/activo";
+    var urlGetCategoria = "https://localhost:44312/api/tiposproductos/";
+    var urlGetIdCategoria = "https://localhost:44312/api/tiposproductos/nombre/";
+
+    var contenido = document.querySelector('#tabla');
+    var contenidoCBCategoria = document.querySelector('#categoria');
+    var contenidoNombre = document.querySelector('#nombre');
+    var contenidoStock = document.querySelector('#stock');
+    var valorCategoria = '';
+
+    getProductos();
+    llenarComboCategoria();
+
+
+    function getProductos() {
+        fetch(url).then(res => res.json()).then(datos => {
+            tabla(datos)
+        })
+    }
+
+    function getProductosActivos() {
+        fetch(urlGetProductoActivo).then(res => res.json()).then(datos => {
+            tabla(datos)
+        })
+    }
+
+
+    function llenarComboCategoria() {
+        contenidoCBCategoria.innerHTML = '';
+        fetch(urlGetCategoria).then(res => res.json()).then(datos => {
+            for (let valor of datos) {
+                contenidoCBCategoria.innerHTML += `
+            <option>${valor.nombre}</option>
+            `
+            }
+        })
+    }
+
+
+    function editar() {
+        var id = "";
+
+        // Obtenemos todos los valores contenidos en los <td> de la fila
+        // seleccionada
+        var id = $(this).parents("tr").find("td").text();
+
+        fetch(urlGetProducto + id).then(res => res.json()).then(datos => {
+
+            console.log(datos[0].nombre);
+
+        })
+    }
+
+
+    function tabla(datos) {
+        contenido.innerHTML = ''
+        for (let valor of datos) {
+
+            fetch(urlGetCategoria + valor.idTipoProducto).then(respuesta => respuesta.json()).then(datosCategoria => {
+                valorCategoria = datosCategoria[0].nombre;
+                contenido.innerHTML += `
+            <tr>
+                                    <th scope="row">${valor.id}</th>
+                                    <td>${valor.nombre}</td>
+                                    <td>${valorCategoria}</td>
+                                    <td>${valor.stock}</td>
+                                    <td>${valor.precio}</td>
+                                    <td>${valor.estado ? "Activo" : "Inactivo"}</td>
+                                    <td><button class="btn btn-primary boton">Editar</button>
+                                     <button class="btn btn-warning botonEstado">Estado</button></td>
+                                </tr>
+                                `
+
+
+            })
+        }
+
+    }
+
+    function post() {
+        //validacion para saber si hay que registrar o actualizar
+        if (document.formulario.labelId == null) {
+            //registramos
+            var estado = "";
+            var idCategoria = "";
+
+            if (document.formulario.estado.value == "Activo")
+                estado = true;
+            else
+                estado = false;
+
+
+            fetch(urlGetIdCategoria + document.formulario.categoria.value).then(respuesta => respuesta.json()).then(datosCategoria => {
+                idCategoria = datosCategoria[0].id
+
+                fetch(url, {
+                    method: "POST",
+                    body: JSON.stringify({
+                        Nombre: document.formulario.nombre.value,
+                        Precio: document.formulario.precio.value,
+                        IdTipoProducto: idCategoria,
+                        Stock: document.formulario.stock.value,
+                        Estado: estado
+                    }),
+                    headers: {
+                        'Accept': "application/json",
+                        "Content-Type": "application/json"
+                    }
+                }).then(function (response) {
+                    if (response.ok) {
+                        return response.text();
+                    } else {
+                        alert("Error al ejecutar solicitud");
+                    }
+                }).then(function (Data) {
+                    console.log(Data);
+                    getProductos();
+                    refrescarFormulario();
+                })
+            });
+        }
+        else {
+            //actualizamos
+            console.log("Estamos actualizando...");
+            var estado = "";
+            var idCategoria = "";
+            var idProducto = document.formulario.labelId;
+
+            if (document.formulario.estado.value == "Activo")
+                estado = true;
+            else
+                estado = false;
+
+            fetch(urlGetIdCategoria + document.formulario.categoria.value).then(respuesta => respuesta.json()).then(datosCategoria => {
+                idCategoria = datosCategoria[0].id
+
+                fetch(url, {
+                    method: "PUT",
+                    body: JSON.stringify({
+                        Id: idProducto,
+                        Nombre: document.formulario.nombre.value,
+                        Precio: document.formulario.precio.value,
+                        IdTipoProducto: idCategoria,
+                        Stock: document.formulario.stock.value,
+                        Estado: estado
+                    }),
+                    headers: {
+                        'Accept': "application/json",
+                        "Content-Type": "application/json"
+                    }
+                }).then(function (response) {
+                    if (response.ok) {
+                        return response.text();
+                    } else {
+                        alert("Error al ejecutar solicitud");
+                    }
+                }).then(function (Data) {
+                    console.log(Data);
+                    getProductos();
+                    refrescarFormulario();
+                })
+            });
+        }
+
+
+    }
+
+    function refrescarFormulario() {
+        document.formulario.nombre.value = null;
+        document.formulario.precio.value = null;
+        document.formulario.stock.value = null;
+        document.formulario.labelId = null;
+        document.formulario.estado.value = "Activo";
+        llenarComboCategoria();
+    }
+
+
+    //evento click para editar un producto
+    $("#tabla").on("click", ".boton", function () {
+        contenidoNombre.innerHTML = '';
+        contenidoStock.innerHTML = '';
+        var id = $(this).parents().parents().children().first().text();
+        fetch(urlGetProducto + id).then(res => res.json()).then(datos => {
+
+
+            fetch(urlGetCategoria + datos.idTipoProducto).then(respuesta => respuesta.json()).then(datosCategoria => {
+                valorCategoria = datosCategoria[0].nombre;
+
+                document.formulario.labelId = datos.id;
+                document.formulario.nombre.value = datos.nombre;
+                document.formulario.stock.value = datos.stock;
+                document.formulario.precio.value = datos.precio;
+                document.formulario.categoria.value = valorCategoria;
+                if (datos.estado == true)
+                    document.formulario.estado.value = "Activo";
+                else
+                    document.formulario.estado.value = "Inactivo";
+                    location.hash = "#registro1";
+                    location.hash = "#registro";
+            });
+        });
+    });
+
+    $("#tabla").on("click", ".botonEstado", function () {
+        contenidoNombre.innerHTML = '';
+        contenidoStock.innerHTML = '';
+        var id = $(this).parents().parents().children().first().text();
+        fetch(urlGetProducto + "estado/" + id).then(res => res.json()).then(datos => {
+            getProductos();
+        });
+    });
+
+    function filterFloat(evt,input){
+    // Backspace = 8, Enter = 13, ‘0′ = 48, ‘9′ = 57, ‘.’ = 46, ‘-’ = 43
+    var key = window.Event ? evt.which : evt.keyCode;    
+    var chark = String.fromCharCode(key);
+    var tempValue = input.value+chark;
+    if(key >= 48 && key <= 57){
+        if(filter(tempValue)=== false){
+            return false;
+        }else{       
+            return true;
+        }
+    }else{
+          if(key == 8 || key == 13 || key == 0) {     
+              return true;              
+          }else if(key == 46){
+                if(filter(tempValue)=== false){
+                    return false;
+                }else{       
+                    return true;
+                }
+          }else{
+              return false;
+          }
+    }
+}
+function filter(__val__){
+    var preg = /^([0-9]+\.?[0-9]{0,2})$/; 
+    if(preg.test(__val__) === true){
+        return true;
+    }else{
+       return false;
+    }
+    
+}
+
+function soloNumeros(e) {
+        key = e.keyCode || e.which;
+        tecla = String.fromCharCode(key).toLowerCase();
+        letras = "0123456789";
+        especiales = [];
+
+        tecla_especial = false
+        for (var i in especiales) {
+            if (key == especiales[i]) {
+                tecla_especial = true;
+                break;
+            }
+        }
+
+        if (letras.indexOf(tecla) == -1 && !tecla_especial)
+            return false;
+    }
+
+    function limpia() {
+        var val = document.getElementById("stock").value;
+        var tam = val.length;
+        for (i = 0; i < tam; i++) {
+            if (!isNaN(val[i]))
+                document.getElementById("stock").value = '';
+        }
+    }
+</script>

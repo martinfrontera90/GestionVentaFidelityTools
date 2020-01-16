@@ -1,0 +1,14 @@
+C:\Users\FRONTCUBILES\source\repos\GestionVentaFidelityTools\GestionVentaFidelityTools\bin\Debug\netcoreapp2.1\GestionVentaFidelityTools.deps.json
+C:\Users\FRONTCUBILES\source\repos\GestionVentaFidelityTools\GestionVentaFidelityTools\bin\Debug\netcoreapp2.1\GestionVentaFidelityTools.runtimeconfig.json
+C:\Users\FRONTCUBILES\source\repos\GestionVentaFidelityTools\GestionVentaFidelityTools\bin\Debug\netcoreapp2.1\GestionVentaFidelityTools.runtimeconfig.dev.json
+C:\Users\FRONTCUBILES\source\repos\GestionVentaFidelityTools\GestionVentaFidelityTools\bin\Debug\netcoreapp2.1\GestionVentaFidelityTools.dll
+C:\Users\FRONTCUBILES\source\repos\GestionVentaFidelityTools\GestionVentaFidelityTools\obj\Debug\netcoreapp2.1\GestionVentaFidelityTools.csprojAssemblyReference.cache
+C:\Users\FRONTCUBILES\source\repos\GestionVentaFidelityTools\GestionVentaFidelityTools\obj\Debug\netcoreapp2.1\GestionVentaFidelityTools.csproj.CoreCompileInputs.cache
+C:\Users\FRONTCUBILES\source\repos\GestionVentaFidelityTools\GestionVentaFidelityTools\obj\Debug\netcoreapp2.1\GestionVentaFidelityTools.RazorAssemblyInfo.cache
+C:\Users\FRONTCUBILES\source\repos\GestionVentaFidelityTools\GestionVentaFidelityTools\obj\Debug\netcoreapp2.1\GestionVentaFidelityTools.RazorAssemblyInfo.cs
+C:\Users\FRONTCUBILES\source\repos\GestionVentaFidelityTools\GestionVentaFidelityTools\obj\Debug\netcoreapp2.1\GestionVentaFidelityTools.AssemblyInfoInputs.cache
+C:\Users\FRONTCUBILES\source\repos\GestionVentaFidelityTools\GestionVentaFidelityTools\obj\Debug\netcoreapp2.1\GestionVentaFidelityTools.AssemblyInfo.cs
+C:\Users\FRONTCUBILES\source\repos\GestionVentaFidelityTools\GestionVentaFidelityTools\obj\Debug\netcoreapp2.1\GestionVentaFidelityTools.RazorTargetAssemblyInfo.cache
+C:\Users\FRONTCUBILES\source\repos\GestionVentaFidelityTools\GestionVentaFidelityTools\bin\Debug\netcoreapp2.1\GestionVentaFidelityTools.pdb
+C:\Users\FRONTCUBILES\source\repos\GestionVentaFidelityTools\GestionVentaFidelityTools\obj\Debug\netcoreapp2.1\GestionVentaFidelityTools.dll
+C:\Users\FRONTCUBILES\source\repos\GestionVentaFidelityTools\GestionVentaFidelityTools\obj\Debug\netcoreapp2.1\GestionVentaFidelityTools.pdb
